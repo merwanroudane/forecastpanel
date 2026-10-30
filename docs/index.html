@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>forecastpanel: forecasting with panel data in Python</title>
+<meta name="description" content="Individual, pooled, fixed- and random-effects, empirical Bayes and optimally combined panel forecasts of Pesaran, Pick and Timmermann (2026), with evaluation tables, panel Diebold-Mariano tests and scenario forecasts.">
+<meta name="author" content="Dr Merwan Roudane">
+<meta property="og:title" content="forecastpanel">
+<meta property="og:description" content="Forecasting with panel data: Pesaran, Pick and Timmermann (2026) in Python.">
+<meta property="og:image" content="https://merwanroudane.github.io/forecastpanel/assets/house_density_all.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Source+Serif+4:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+
+<div class="top"><div class="wrap">
+  <a class="brand" href="#"><span>forecastpanel</span></a>
+  <nav class="nav">
+    <a href="#install">Install</a><a href="#theory">Theory</a><a href="#api">API</a>
+    <a href="#example">Example</a><a href="#small">Small panels</a><a href="#findings">Code vs paper</a>
+    <a href="#references">References</a>
+    <a href="https://github.com/merwanroudane/forecastpanel">GitHub</a><a href="https://pypi.org/project/forecastpanel/">PyPI</a>
+  </nav>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <h1>forecastpanel</h1>
+  <p class="lead">Forecasting with panel data: individual, pooled, fixed- and random-effects, empirical Bayes and optimally combined forecasts, with the evaluation tables and tests of the paper.</p>
+  <p class="cite">Implements M. Hashem Pesaran, Andreas Pick and Allan Timmermann (2026), “Forecasting with panel data: Estimation uncertainty versus parameter heterogeneity”, <em>Quantitative Economics</em> 17(2), 342–393.</p>
+  <div class="pills"><span class="pill">v0.1.0</span><span class="pill">MIT licence</span><span class="pill">Python ≥ 3.9</span><span class="pill">verified against the authors' MATLAB code</span></div>
+  <div class="install"><code id="pipline">pip install forecastpanel</code><button class="copy" style="position:static" onclick="navigator.clipboard.writeText('pip install forecastpanel')">copy</button></div>
+  <div class="btns">
+    <a class="btn" href="https://github.com/merwanroudane/forecastpanel">GitHub</a>
+    <a class="btn" href="https://pypi.org/project/forecastpanel/">PyPI</a>
+    <a class="btn ghost" href="https://doi.org/10.3982/QE2589">Read the paper</a>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section id="what">
+  <div class="eyebrow">What it does</div>
+  <h2>Pool, don’t pool, or combine?</h2>
+  <p>With many units observed for a short time, unit-by-unit forecasts are noisy and pooled forecasts are biased when units differ. The paper quantifies this trade-off and proposes combinations and empirical Bayes forecasts that adapt to it. The package gives you every method in one call.</p>
+  <div class="grid">
+    <div class="card"><h3>Ten forecasting methods</h3><p class="muted">Individual, pooled, FE, RE-BLUP, empirical Bayes, three optimal combinations and two equal-weight combinations; plus Stein, Mallows, iterative and hierarchical Bayes, mean group and RE-AR(1) as extensions.</p></div>
+    <div class="card teal"><h3>Evaluation &amp; tests</h3><p class="muted">Rolling or expanding windows, Table 2 (relative MSFE, beating, best and worst shares, κ conditioning), panel and unit Diebold–Mariano tests (Table 3).</p></div>
+    <div class="card amber"><h3>Small panels</h3><p class="muted">Lags built automatically, contemporaneous scenario variables, iterated multi-step forecasts, offsets and bootstrap predictive intervals.</p></div>
+    <div class="card sky"><h3>Real data &amp; figures</h3><p class="muted">House prices of 377 US metros and 187 CPI sub-indices; journal-style tables (text, LaTeX) and figures with the MATLAB Parula map.</p></div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="eyebrow">Installation</div>
+  <h2>Install</h2>
+<pre><code class="language-bash">pip install forecastpanel
+pip install "forecastpanel[excel]"     # read .xlsx files
+pip install "forecastpanel[fast]"      # parallel Monte Carlo (joblib)</code></pre>
+  <p class="muted">Requires Python ≥ 3.9 with numpy, scipy, pandas and matplotlib. New to Python? The <a href="https://github.com/merwanroudane/forecastpanel#2-start-from-absolutely-nothing">README guide</a> starts from installing Anaconda.</p>
+</section>
+
+<section id="theory">
+  <div class="eyebrow">Theory</div>
+  <h2>The model and the forecasts</h2>
+  <div class="card theory">
+    <p>Panel regression with heterogeneous coefficients (eq. 1):
+    $$y_{it}=\boldsymbol\theta_i'\mathbf w_{it}+\varepsilon_{it},\qquad \mathbf w_{it}=(1,\mathbf x_{it}')',\qquad \boldsymbol\theta_i=\boldsymbol\theta+\boldsymbol\eta_i ,$$
+    where \(\mathbf x_{it}\) is known at \(t-h\) and may contain lagged \(y\) (weakly exogenous regressors).</p>
+    <p>Individual and pooled forecasts, \(\hat y_{i,T+1}=\hat{\boldsymbol\theta}_i'\mathbf w_{i,T+1}\) and \(\tilde y_{i,T+1}=\tilde{\boldsymbol\theta}'\mathbf w_{i,T+1}\), have average MSFEs (Propositions 1–2)
+    $$\frac1N\sum_i\hat e_{i,T+1}^2=\bar\sigma^2+T^{-1}h_{NT}+O_p(N^{-1/2}),\qquad \frac1N\sum_i\tilde e_{i,T+1}^2=\bar\sigma^2+\Delta_{NT}+O_p(N^{-1/2}).$$
+    \(h_{NT}\) is the cost of estimation error and \(\Delta_{NT}\) the cost of neglected heterogeneity.</p>
+    <p>The combination \(y^*_{i,T+1}=\omega\hat y_{i,T+1}+(1-\omega)\tilde y_{i,T+1}\) has optimal common weight (eq. 32)
+    $$\omega^*_{NT}=\frac{\Delta_{NT}-T^{-1}\psi_{NT}}{\Delta_{NT}+T^{-1}h_{NT}-2T^{-1}\psi_{NT}},$$
+    estimated with
+    $$\hat\Delta_{NT}=\tfrac1N\sum_i(\mathbf w_{i,T+1}'\tilde{\boldsymbol\eta}_i)^2,\quad \hat h_{NT}=\tfrac1N\sum_i\hat\sigma_i^2\,\mathbf w_{i,T+1}'\mathbf Q_{iT}^{-1}\mathbf w_{i,T+1},$$
+    and \(\hat\psi_{NT}\) from the half-panel jackknife bias \(\tfrac12(\hat{\boldsymbol\theta}_{ia}+\hat{\boldsymbol\theta}_{ib})-\hat{\boldsymbol\theta}_i\) (eqs. 40, 41, 43).</p>
+    <p>Unit-specific weights (eq. 36): \(\omega_i^*=\dfrac{\mathbf w'\boldsymbol\Omega_\eta\mathbf w}{\mathbf w'(T^{-1}\sigma_i^2\mathbf Q_{iT}^{-1}+\boldsymbol\Omega_\eta)\mathbf w}\). Empirical Bayes (eq. 44, Hsiao, Pesaran and Tahmiscioglu, 1999):
+    $$\hat{\boldsymbol\theta}_{i,EB}=\big(\hat\sigma_i^{-2}\mathbf W_i'\mathbf W_i+\hat{\boldsymbol\Omega}_\eta^{-1}\big)^{-1}\big(\hat\sigma_i^{-2}\mathbf W_i'\mathbf y_i+\hat{\boldsymbol\Omega}_\eta^{-1}\bar{\hat{\boldsymbol\theta}}\big).$$</p>
+  </div>
+  <h3>Step → equation map</h3>
+  <div class="tbl"><table>
+    <tr><th>Code</th><th>Paper</th><th>What it computes</th></tr>
+    <tr><td><code>individual_ols</code></td><td>(11), (S.11)</td><td>unit OLS, σ̂²ᵢ with T − K</td></tr>
+    <tr><td><code>pooled_ols</code></td><td>(12)</td><td>pooled OLS</td></tr>
+    <tr><td><code>fixed_effects</code></td><td>(25)</td><td>within slopes and unit intercepts</td></tr>
+    <tr><td><code>random_effects_blup</code></td><td>(S.16)</td><td>RE-GLS + Goldberger (1962) BLUP correction</td></tr>
+    <tr><td><code>empirical_bayes</code></td><td>(44)–(45)</td><td>EB coefficients and shrinkage matrices</td></tr>
+    <tr><td><code>half_jackknife</code></td><td>Sec. 4.3</td><td>half-panel jackknife (odd T drops the middle observation)</td></tr>
+    <tr><td><code>weight_individual_pooled</code></td><td>(32), (40), (41), (43)</td><td>ω̂ with Δ̂, ĥ, ψ̂</td></tr>
+    <tr><td><code>weight_individual_fe</code></td><td>(39), (79)–(81)</td><td>individual/FE weight (code or paper variant)</td></tr>
+    <tr><td><code>weights_unit_specific</code></td><td>(36), (46)</td><td>ω*ᵢ with σ̂²ᵢ of PPT (2022)</td></tr>
+    <tr><td><code>hierarchical_bayes</code></td><td>(S.17)</td><td>Gibbs sampler, 1500 draws, 500 burn-in</td></tr>
+    <tr><td><code>panel_dm_test</code>, <code>dm_test</code></td><td>Table 3</td><td>PPP (2013) panel DM; DM (1995) and HLN (1997)</td></tr>
+    <tr><td><code>simulate_panel</code>, <code>monte_carlo</code></td><td>(47)–(51), Table 1</td><td>Monte Carlo design</td></tr>
+    <tr><td><code>panel_pr2</code></td><td>Table S.1</td><td>pooled R² of the design</td></tr>
+  </table></div>
+  <p class="muted">Full map and derivations: <a href="https://github.com/merwanroudane/forecastpanel/blob/main/docs/methods.md">docs/methods.md</a>.</p>
+</section>
+
+<section id="api">
+  <div class="eyebrow">API</div>
+  <h2>Syntax reference</h2>
+  <div class="card">
+<pre><code class="language-python">model = fp.PanelForecaster(data, unit, time, y, y_lags=[1], x=None, exog=None,
+                           trend=False, methods=None, fe_weight="code",
+                           unit_sigma="ppt2022", omega_regularize=None)
+res = model.fit(window=None, end=None, future=None)          # ForecastResults
+res.forecast(horizon=1, future=None, fill=None, offsets=None)
+res.intervals(horizon=1, future=None, n_boot=499, level=0.90, seed=None, design="fixed")
+res.summary(); res.coefficients(); res.unit_weights(); res.eb_shrinkage()
+ev = model.evaluate(window=60, scheme="rolling", n_forecasts=None, horizon=1)
+ev.summary(); ev.msfe_table(); ev.dm_tests(variance="independent"); ev.to_latex("msfe")
+ev.plot_density(); ev.plot_heatmap(); ev.plot_cumulative()</code></pre>
+  </div>
+  <div class="tbl"><table>
+    <tr><th>Argument</th><th>Default</th><th>Meaning</th></tr>
+    <tr><td><code>y_lags</code></td><td><code>[1]</code></td><td>lags of y in w<sub>it</sub></td></tr>
+    <tr><td><code>x</code></td><td><code>None</code></td><td>predictors: list (lag 1) or <code>{name: lags}</code>; lag 0 = contemporaneous</td></tr>
+    <tr><td><code>exog</code></td><td><code>None</code></td><td>contemporaneous scenario variables</td></tr>
+    <tr><td><code>methods</code></td><td>paper 8 + 2</td><td>keys: individual, pooled, re, fe, eb, comb_pool, comb_fe, comb_unit, eq_pool, eq_fe, comb_unit_ba, mean_group, ib, stein, mallows, re_ar1, hb</td></tr>
+    <tr><td><code>fe_weight</code></td><td><code>"code"</code></td><td>individual/FE weight: replication code or eqs. (79)–(81)</td></tr>
+    <tr><td><code>unit_sigma</code></td><td><code>"ppt2022"</code></td><td>σ²ᵢ in eq. (46)</td></tr>
+    <tr><td><code>omega_regularize</code></td><td><code>None</code></td><td><code>"ridge"</code>/<code>"diagonal"</code> Ω̂η for small N</td></tr>
+    <tr><td><code>kappa_legacy</code> (evaluate)</td><td><code>False</code></td><td>reproduce the published κ columns (see below)</td></tr>
+  </table></div>
+</section>
+
+<section id="example">
+  <div class="eyebrow">Application</div>
+  <h2>US house prices: replicating Tables 2 and 3</h2>
+  <p>Real house-price inflation in 362 metropolitan areas, 1976Q1–2023Q1 (Freddie Mac index deflated by CPI-U). Model (52): own lag, spatial lag, regional and national averages; rolling windows of 60 quarters, 128 forecasts.</p>
+<pre><code class="language-python">import forecastpanel as fp
+df = fp.load_house_prices(with_neighbors_only=True)
+model = fp.PanelForecaster(df, unit="msa", time="quarter", y="dhp", y_lags=[1],
+                           x={"dhp_spatial": 1, "dhp_region": 1, "dhp_us": 1}, methods="paper")
+ev = model.evaluate(window=60, n_forecasts=128)
+print(ev.summary())</code></pre>
+  <div class="tbl"><table>
+    <tr><th></th><th class="n">MSFE ratio (all)</th><th class="n">κ=0</th><th class="n">κ=±1</th><th class="n">Beat bench. (all)</th><th class="n">Largest MSFE (all)</th><th class="n">Panel DM</th><th class="n">DM&lt;−1.96 / &gt;1.96</th></tr>
+    <tr><td>Individual</td><td class="n">2.822</td><td class="n">2.258</td><td class="n">2.908</td><td class="n">–</td><td class="n">0.569</td><td class="n">–</td><td class="n">–</td></tr>
+    <tr><td>Pooled</td><td class="n">0.920</td><td class="n">0.769</td><td class="n">0.983</td><td class="n">0.613</td><td class="n">0.157</td><td class="n">−9.45</td><td class="n">60/6</td></tr>
+    <tr><td>RE</td><td class="n">0.924</td><td class="n">0.773</td><td class="n">0.991</td><td class="n">0.619</td><td class="n">0.003</td><td class="n">−9.11</td><td class="n">62/6</td></tr>
+    <tr><td>FE</td><td class="n">0.936</td><td class="n">0.791</td><td class="n">1.012</td><td class="n">0.591</td><td class="n">0.251</td><td class="n">−7.57</td><td class="n">57/8</td></tr>
+    <tr><td>Emp. Bayes</td><td class="n best">0.901</td><td class="n">0.821</td><td class="n best">0.908</td><td class="n best">0.942</td><td class="n">0.003</td><td class="n">−24.63</td><td class="n">209/2</td></tr>
+    <tr><td>Comb. (pool)</td><td class="n">0.920</td><td class="n">0.860</td><td class="n">0.917</td><td class="n">0.939</td><td class="n best">0.000</td><td class="n">−22.93</td><td class="n">189/0</td></tr>
+    <tr><td>Comb. (FE)</td><td class="n">0.937</td><td class="n">0.892</td><td class="n">0.931</td><td class="n">0.917</td><td class="n">0.011</td><td class="n">−21.19</td><td class="n">169/0</td></tr>
+    <tr><td>Comb. (ω*ᵢ)</td><td class="n">0.921</td><td class="n">0.836</td><td class="n">0.942</td><td class="n">0.936</td><td class="n">0.006</td><td class="n best">−27.59</td><td class="n best">240/0</td></tr>
+  </table></div>
+  <div class="callout teal">The “all” columns and every DM statistic coincide with Tables 2 and 3 of the paper. The κ columns use each MSA’s own predictor value; <code>kappa_legacy=True</code> reproduces the published κ columns exactly.</div>
+  <div class="two">
+    <figure><img src="assets/house_density_all.png" alt="Densities of MSFE ratios"><figcaption>Figure 1 replica: cross-sectional distribution of unit MSFE ratios.</figcaption></figure>
+    <figure><img src="assets/house_cumulative.png" alt="Cumulative gains"><figcaption>Cumulative MSFE gains over the individual forecasts, 1991–2023.</figcaption></figure>
+  </div>
+  <figure><img src="assets/house_forecasts.png" alt="Forecast paths"><figcaption>Forecasts for 2023Q2–2024Q1 from the last window with 90% bootstrap bands (empirical Bayes).</figcaption></figure>
+  <div class="two">
+    <figure><img src="assets/house_coefficients.png" alt="Coefficient dispersion"><figcaption>Unit AR coefficients: OLS versus empirical Bayes shrinkage.</figcaption></figure>
+    <figure><img src="assets/house_weights.png" alt="Weights"><figcaption>Unit-specific weights ω*ᵢ and the common weights.</figcaption></figure>
+  </div>
+</section>
+
+<section id="small">
+  <div class="eyebrow">Small panels</div>
+  <h2>Annual data, scenarios and intervals</h2>
+  <p>A typical firm, sector or country panel has a few units, about a dozen years, and needs forecasts five years ahead under scenarios. The example uses nine large metros, annual 2011–2022 (T = 12), with national inflation as a contemporaneous driver.</p>
+<pre><code class="language-python">model = fp.PanelForecaster(d, unit="metro", time="year", y="dhp", y_lags=[1], exog=["dhp_us"],
+                           methods=["individual", "pooled", "fe", "eb", "comb_pool", "comb_unit", "mallows", "stein"])
+res = model.fit()
+baseline = pd.DataFrame({"year": [2023, 2024, 2025, 2026, 2027], "dhp_us": [-2, 0, 1.5, 2, 2]})
+fc = res.forecast(horizon=5, future=baseline)                  # iterated scenario forecasts
+iv = res.intervals(horizon=5, future=baseline, n_boot=499, seed=2026)
+ev = model.evaluate(window=7, scheme="expanding")</code></pre>
+  <figure><img src="assets/small_panel_forecasts.png" alt="Small panel forecasts"><figcaption>Five-year scenario forecasts with 90% bootstrap bands.</figcaption></figure>
+  <div class="callout">Use your own spreadsheet with <code>fp.wide_to_long(df, time="year", units=[...], common=[...])</code>. A scenario variable that is zero throughout the sample has no estimable effect; add it with <code>forecast(..., offsets={unit: [...]})</code> and report it as an assumption.</div>
+</section>
+
+<section id="interpret">
+  <div class="eyebrow">Reading the output</div>
+  <h2>Interpreting tables and figures</h2>
+  <div class="two">
+    <div class="card teal"><h3>Weights</h3><p><b>weight</b> is the share of the individual forecast. Δ̂ (heterogeneity) pushes it up, ĥ (estimation error, large for small T or unusual regressors) pushes it down, and ψ̂ corrects for correlated heterogeneity with lagged dependent variables.</p></div>
+    <div class="card teal"><h3>Table 2</h3><p>Values below 1 in the MSFE-ratio block favour the method. A low “largest MSFE” share means the method rarely fails badly: the insurance property of EB and the combinations.</p></div>
+    <div class="card teal"><h3>Table 3</h3><p>Negative panel DM statistics mean the method beats the individual forecasts on average. The counts give units with significantly better / worse forecasts at 5%.</p></div>
+    <div class="card teal"><h3>Figure 1</h3><p>Mass left of 1 is good. Wide, right-skewed densities (pooled, FE, RE) signal high risk for units far from the average; EB and combinations are concentrated just below 1.</p></div>
+  </div>
+</section>
+
+<section id="findings">
+  <div class="eyebrow">Compatibility</div>
+  <h2>Checked against the authors’ code, and what differs</h2>
+  <div class="card sky">
+    <ul>
+      <li>All eleven forecasts agree with the MATLAB replication functions to <b>1e-10</b> on three simulated panels.</li>
+      <li>Table 2 and Table 3 (house prices) are reproduced number for number; Table 1 within Monte Carlo error; Table S.1 exactly.</li>
+    </ul>
+  </div>
+  <div class="callout rose"><b>κᵢ classification (house prices).</b> In <code>ppt_house.m</code> the forecast-period value is stored as a full column and read by linear index, so every MSA is compared with MSA no. 1’s value. With each MSA’s own value the pooled κᵢ = 0 ratio is 0.769, not 1.162. Default: corrected; <code>kappa_legacy=True</code>: published numbers.</div>
+  <div class="callout rose"><b>Panel DM with missing values (CPI).</b> The unbalanced branch scales the variance by Σⱼ1/Tⱼ instead of 1/Tᵢ, dividing the statistic by about √N. Default: correct formula; <code>variance="ppp-legacy"</code>: the code; <code>"cross-section-average"</code>: footnote 17.</div>
+  <div class="callout rose"><b>CPI factor.</b> <code>ppt_cpi.m</code> computes the principal component from the first 72 months only, so the same factor values enter every rolling window.</div>
+</section>
+
+<section id="beyond">
+  <div class="eyebrow">Beyond the paper</div>
+  <h2>Extensions (additions to the original method)</h2>
+  <div class="tbl"><table>
+    <tr><th>Addition</th><th>What it adds</th><th>Reference</th></tr>
+    <tr><td>Stein-rule shrinkage</td><td>pooled weight c/F from the Chow statistic</td><td>Maddala et al. (1997)</td></tr>
+    <tr><td>Iterative Bayes</td><td>EB iterated to convergence</td><td>Maddala et al. (1997)</td></tr>
+    <tr><td>Mallows pooling averaging</td><td>closed-form two-model Mallows weight</td><td>Wang, Zhang and Paap (2019)</td></tr>
+    <tr><td>RE-AR(1) BLUP</td><td>random effects with serially correlated errors</td><td>Baltagi and Li (1992); Baltagi (2008)</td></tr>
+    <tr><td>Mean group</td><td>average of unit estimates with Pesaran–Smith SEs</td><td>Pesaran and Smith (1995)</td></tr>
+    <tr><td>Regularised Ω̂η</td><td>EB when N is close to K</td><td>paper footnote 12</td></tr>
+    <tr><td>Multi-step &amp; scenarios</td><td>iterated forecasts, scenario paths, offsets</td><td>—</td></tr>
+    <tr><td>Bootstrap intervals</td><td>predictive bands with estimation and innovation uncertainty</td><td>—</td></tr>
+  </table></div>
+</section>
+
+<section id="references">
+  <div class="eyebrow">References</div>
+  <h2>References</h2>
+  <ol>
+    <li>Pesaran, Pick and Timmermann (2026). Forecasting with panel data: Estimation uncertainty versus parameter heterogeneity. <em>Quantitative Economics</em> 17(2), 342–393. <a href="https://doi.org/10.3982/QE2589">doi:10.3982/QE2589</a></li>
+    <li>Pesaran, Pick and Pranovich (2013). Optimal forecasts in the presence of structural breaks. <em>J. Econometrics</em> 177, 134–152. <a href="https://doi.org/10.1016/j.jeconom.2013.04.002">doi</a></li>
+    <li>Hsiao, Pesaran and Tahmiscioglu (1999). Bayes estimation of short-run coefficients in dynamic panel data models. Cambridge UP. <a href="https://doi.org/10.1017/CBO9780511493140.013">doi</a></li>
+    <li>Goldberger (1962). Best linear unbiased prediction in the generalized linear regression model. <em>JASA</em> 57. <a href="https://doi.org/10.1080/01621459.1962.10480665">doi</a></li>
+    <li>Baltagi (2008). Forecasting with panel data. <em>J. Forecasting</em> 27. <a href="https://doi.org/10.1002/for.1047">doi</a></li>
+    <li>Baltagi and Li (1992). Prediction in the one-way error component model with serial correlation. <em>J. Forecasting</em> 11. <a href="https://doi.org/10.1002/for.3980110605">doi</a></li>
+    <li>Maddala, Trost, Li and Joutz (1997). Estimation of short-run and long-run elasticities of energy demand from panel data using shrinkage estimators. <em>JBES</em> 15. <a href="https://doi.org/10.1080/07350015.1997.10524691">doi</a></li>
+    <li>Wang, Zhang and Paap (2019). To pool or not to pool. <em>J. Applied Econometrics</em> 34. <a href="https://doi.org/10.1002/jae.2696">doi</a></li>
+    <li>Trapani and Urga (2009). Optimal forecasting with heterogeneous panels: A Monte Carlo study. <em>IJF</em> 25. <a href="https://doi.org/10.1016/j.ijforecast.2009.02.001">doi</a></li>
+    <li>Chudik, Pesaran and Yang (2018). Half-panel jackknife fixed-effects estimation. <em>J. Applied Econometrics</em> 33. <a href="https://doi.org/10.1002/jae.2623">doi</a></li>
+    <li>Dhaene and Jochmans (2015). Split-panel jackknife estimation of fixed-effect models. <em>REStud</em> 82. <a href="https://doi.org/10.1093/restud/rdv007">doi</a></li>
+    <li>Pesaran and Smith (1995). Estimating long-run relationships from dynamic heterogeneous panels. <em>J. Econometrics</em> 68. <a href="https://doi.org/10.1016/0304-4076(94)01644-F">doi</a></li>
+    <li>Diebold and Mariano (1995). Comparing predictive accuracy. <em>JBES</em> 13. <a href="https://doi.org/10.1080/07350015.1995.10524599">doi</a></li>
+    <li>Harvey, Leybourne and Newbold (1997). Testing the equality of prediction mean squared errors. <em>IJF</em> 13. <a href="https://doi.org/10.1016/S0169-2070(96)00719-4">doi</a></li>
+    <li>Lindley and Smith (1972). Bayes estimates for the linear model. <em>JRSS B</em> 34. <a href="https://doi.org/10.1111/j.2517-6161.1972.tb00885.x">doi</a></li>
+    <li>Timmermann (2006). Forecast combinations. <em>Handbook of Economic Forecasting</em> 1. <a href="https://doi.org/10.1016/S1574-0706(05)01004-9">doi</a></li>
+    <li>Yang (2021). Common factors and spatial dependence: an application to US house prices. <em>Econometric Reviews</em> 40. <a href="https://doi.org/10.1080/07474938.2020.1741785">doi</a></li>
+    <li>Welch and Goyal (2008). A comprehensive look at the empirical performance of equity premium prediction. <em>RFS</em> 21. <a href="https://doi.org/10.1093/rfs/hhm014">doi</a></li>
+  </ol>
+</section>
+
+<section id="author">
+  <div class="eyebrow">Author</div>
+  <h2>Author &amp; citation</h2>
+  <div class="card">
+    <div class="author">
+      <div class="avatar">MR</div>
+      <div><b>Dr Merwan Roudane</b><br>
+        <a href="mailto:merwanroudane920@gmail.com">merwanroudane920@gmail.com</a> · <a href="https://github.com/merwanroudane">github.com/merwanroudane</a><br>
+        <span class="muted">Repository: <a href="https://github.com/merwanroudane/forecastpanel">github.com/merwanroudane/forecastpanel</a> · PyPI: <a href="https://pypi.org/project/forecastpanel/">forecastpanel</a> · Paper: <a href="https://doi.org/10.3982/QE2589">doi:10.3982/QE2589</a></span><br>
+        <span class="muted">Other packages (CRAN): <a href="https://cran.r-project.org/package=QuantileOnQuantile">QuantileOnQuantile</a>, <a href="https://cran.r-project.org/package=mqqr">mqqr</a>, <a href="https://cran.r-project.org/package=qqkrls">qqkrls</a>, <a href="https://cran.r-project.org/package=mqqcause">mqqcause</a></span>
+      </div>
+    </div>
+<pre><code class="language-bibtex">@software{roudane_forecastpanel,
+  author  = {Roudane, Merwan},
+  title   = {{forecastpanel}: Forecasting with panel data in Python},
+  year    = {2026}, version = {0.1.0},
+  url     = {https://github.com/merwanroudane/forecastpanel}
+}</code></pre>
+    <p class="muted">Please also cite Pesaran, Pick and Timmermann (2026), <a href="https://doi.org/10.3982/QE2589">doi:10.3982/QE2589</a>.</p>
+  </div>
+</section>
+
+</main>
+<footer><div class="wrap">© 2026 Dr Merwan Roudane · MIT Licence · forecastpanel 0.1.0 · page updated 30 October 2026</div></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  if (window.renderMathInElement) renderMathInElement(document.body, {delimiters: [
+    {left: "$$", right: "$$", display: true}, {left: "\\(", right: "\\)", display: false}]});
+  if (window.hljs) hljs.highlightAll();
+  document.querySelectorAll("pre").forEach(function (pre) {
+    var b = document.createElement("button"); b.className = "copy"; b.textContent = "copy";
+    b.onclick = function () { navigator.clipboard.writeText(pre.innerText.replace(/copy$/, "")); b.textContent = "copied"; setTimeout(function(){b.textContent="copy"}, 1200); };
+    pre.appendChild(b);
+  });
+});
+</script>
+</body>
+</html>

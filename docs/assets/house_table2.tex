@@ -1,0 +1,21 @@
+% requires \usepackage{booktabs}
+\begin{table}[htbp]\centering\footnotesize
+\caption{House price inflation: out-of-sample accuracy}
+\begin{tabular}{lcccccccccccc}
+\toprule
+ & \multicolumn{3}{c}{Ratio of ave. MSFE} & \multicolumn{3}{c}{Freq. beating benchmark} & \multicolumn{3}{c}{Freq. smallest MSFE} & \multicolumn{3}{c}{Freq. largest MSFE} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}\cmidrule(lr){11-13}
+ & all & $\kappa_i=0$ & $\kappa_i=\pm1$ & all & $\kappa_i=0$ & $\kappa_i=\pm1$ & all & $\kappa_i=0$ & $\kappa_i=\pm1$ & all & $\kappa_i=0$ & $\kappa_i=\pm1$ \\
+\midrule
+Individual & 2.822 & 2.258 & 2.908 & -- & -- & -- & 0.011 & 0.108 & 0.130 & 0.569 & 0.561 & 0.439 \\
+Pooled & 0.920 & 0.769 & 0.983 & 0.613 & 0.638 & 0.525 & 0.182 & 0.309 & 0.251 & 0.157 & 0.116 & 0.177 \\
+RE & 0.924 & 0.773 & 0.991 & 0.619 & 0.635 & 0.539 & 0.124 & 0.047 & 0.030 & 0.003 & 0.017 & 0.014 \\
+FE & 0.936 & 0.791 & 1.012 & 0.591 & 0.627 & 0.528 & 0.077 & 0.157 & 0.149 & 0.251 & 0.232 & 0.279 \\
+Emp. Bayes & 0.901 & 0.821 & 0.908 & 0.942 & 0.785 & 0.715 & 0.260 & 0.193 & 0.207 & 0.003 & 0.039 & 0.047 \\
+Comb. (pool) & 0.920 & 0.860 & 0.917 & 0.939 & 0.771 & 0.727 & 0.240 & 0.088 & 0.097 & 0.000 & 0.011 & 0.017 \\
+Comb. (FE) & 0.937 & 0.892 & 0.931 & 0.917 & 0.765 & 0.707 & 0.039 & 0.050 & 0.069 & 0.011 & 0.017 & 0.019 \\
+Comb. ($\omega_i^*$) & 0.921 & 0.836 & 0.942 & 0.936 & 0.782 & 0.713 & 0.066 & 0.041 & 0.066 & 0.006 & 0.006 & 0.008 \\
+\bottomrule
+\end{tabular}
+\par\smallskip\parbox{\linewidth}{\scriptsize Notes: first row gives the average MSFE of the individual forecasts; other rows report ratios to it, the share of units beating the benchmark, and the shares with the smallest and largest MSFE. Method of Pesaran, Pick and Timmermann (2026).}
+\end{table}

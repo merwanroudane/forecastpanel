@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+title: "forecastpanel: Forecasting with panel data in Python"
+message: "If you use this software, please cite it and the original paper."
+authors:
+  - family-names: Roudane
+    given-names: Merwan
+    email: merwanroudane920@gmail.com
+version: 0.1.0
+date-released: "2026-10-30"
+url: "https://github.com/merwanroudane/forecastpanel"
+license: MIT
+references:
+  - type: article
+    authors:
+      - family-names: Pesaran
+        given-names: M. Hashem
+      - family-names: Pick
+        given-names: Andreas
+      - family-names: Timmermann
+        given-names: Allan
+    title: "Forecasting with panel data: Estimation uncertainty versus parameter heterogeneity"
+    journal: "Quantitative Economics"
+    volume: 17
+    issue: 2
+    start: 342
+    end: 393
+    year: 2026
+    doi: "10.3982/QE2589"

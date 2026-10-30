@@ -1,0 +1,38 @@
+============================================================================================
+                Panel forecasts  -  Pesaran, Pick and Timmermann (2026, QE)                 
+============================================================================================
+Dependent variable  : dhp                     Regressors (K)      :                      5
+Units (N)           : 362                     Units dropped       :                      0
+Periods (T)         : 60                      Contemporaneous     :                      0
+Sample              : 2008Q2-2023Q1           Methods             :                      8
+w_it = (const, dhp(-1), dhp_spatial(-1), dhp_region(-1), dhp_us(-1))
+--------------------------------------------------------------------------------------------
+Combination weights (weight on the INDIVIDUAL forecast)
+                                weight   unclipped      Delta          h        psi   eq.
+--------------------------------------------------------------------------------------------
+Comb. (pool)                    1.0000      1.7294     2.8779    31.0940    73.0935   (32)
+Comb. (FE)                      1.0000      1.7377     2.9197    28.3988    72.1415   (39)
+Comb. (w*_i) min/med/max        0.5009      0.8621     0.9871                         (46)
+Emp. Bayes W_iT (mean diag)     0.7988                                                (45)
+RE variance comps s2_a/s2_e     0.0163      3.1331
+--------------------------------------------------------------------------------------------
+Coefficients                             Coef.   Std.Err.        t    P>|t|
+--------------------------------------------------------------------------------------------
+Pooled                       const      0.1744     0.0070   24.884    0.000 ***
+Pooled                     dhp(-1)      0.9377     0.0085  110.854    0.000 ***
+Pooled             dhp_spatial(-1)      0.0037     0.0105    0.352    0.725 
+Pooled              dhp_region(-1)      0.0068     0.0103    0.663    0.508 
+Pooled                  dhp_us(-1)     -0.0005     0.0085   -0.055    0.956 
+FE                         dhp(-1)      0.9338     0.0089  105.309    0.000 ***
+FE                 dhp_spatial(-1)      0.0058     0.0110    0.523    0.601 
+FE                  dhp_region(-1)      0.0080     0.0108    0.743    0.458 
+FE                      dhp_us(-1)      0.0001     0.0089    0.009    0.993 
+Mean group                   const      0.1338     0.0205    6.543    0.000 ***
+Mean group                 dhp(-1)      0.8933     0.0157   56.977    0.000 ***
+Mean group         dhp_spatial(-1)      0.0633     0.0299    2.121    0.035 **
+Mean group          dhp_region(-1)     -0.0908     0.0389   -2.334    0.020 **
+Mean group              dhp_us(-1)      0.0991     0.0289    3.428    0.001 ***
+============================================================================================
+Significance: *** p<0.01, ** p<0.05, * p<0.10. Pooled/FE: cluster-robust (unit) SEs;
+mean group: Pesaran-Smith (1995) SEs. Weights clipped to [0, 1] as in the replication code.
+Delta: heterogeneity cost (40); h: estimation-error cost (41); psi: correlated-heterogeneity term (43).

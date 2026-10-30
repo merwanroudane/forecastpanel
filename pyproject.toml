@@ -1,0 +1,52 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "forecastpanel"
+dynamic = ["version"]
+description = "Forecasting with panel data: individual, pooled, FE, RE, empirical Bayes and optimal combinations"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Merwan Roudane", email = "merwanroudane920@gmail.com" }]
+maintainers = [{ name = "Merwan Roudane", email = "merwanroudane920@gmail.com" }]
+keywords = ["econometrics", "panel data", "forecasting", "forecast combination", "empirical Bayes",
+            "Diebold-Mariano", "heterogeneous panels", "pooling"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Mathematics",
+  "Topic :: Office/Business :: Financial",
+]
+dependencies = ["numpy>=1.22", "scipy>=1.8", "pandas>=1.4", "matplotlib>=3.5"]
+
+[project.optional-dependencies]
+plotly = ["plotly>=5.0"]
+fast = ["joblib>=1.2"]
+excel = ["openpyxl>=3.0"]
+dev = ["pytest>=7", "build", "twine", "openpyxl"]
+
+[project.urls]
+Homepage = "https://merwanroudane.github.io/forecastpanel/"
+Repository = "https://github.com/merwanroudane/forecastpanel"
+Documentation = "https://merwanroudane.github.io/forecastpanel/"
+Issues = "https://github.com/merwanroudane/forecastpanel/issues"
+Paper = "https://doi.org/10.3982/QE2589"
+
+[tool.hatch.version]
+path = "src/forecastpanel/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/forecastpanel"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/", "tests/", "examples/", "README.md", "LICENSE", "CHANGELOG.md", "CITATION.cff", "pytest.ini"]
