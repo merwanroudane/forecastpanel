@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" role="img" aria-labelledby="t d">
+  <title id="t">forecastpanel — forecasting with panel data in Python</title>
+  <desc id="d">Several unit time series feeding individual and pooled forecasts that merge into an optimal combination with a forecast fan, beside the package title, key facts and the author's name.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef2ff"/>
+      <stop offset="0.55" stop-color="#ecfeff"/>
+      <stop offset="1" stop-color="#f0fdf4"/>
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="0.5" stop-color="#0284c7"/>
+      <stop offset="1" stop-color="#0d9488"/>
+    </linearGradient>
+    <linearGradient id="fan" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#14b8a6" stop-opacity="0.32"/>
+      <stop offset="1" stop-color="#14b8a6" stop-opacity="0.08"/>
+    </linearGradient>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="40"/>
+    </filter>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#1e3a8a" flood-opacity="0.10"/>
+    </filter>
+    <clipPath id="frame"><rect width="1280" height="420" rx="28"/></clipPath>
+  </defs>
+
+  <style>
+    .en   { font-family: "Segoe UI", Inter, "Helvetica Neue", Arial, sans-serif; }
+    .mono { font-family: "Cascadia Code", "JetBrains Mono", Consolas, monospace; }
+    .draw { stroke-dasharray: 520; stroke-dashoffset: 520; animation: draw 6s ease-in-out infinite; }
+    .d2 { animation-delay: .25s } .d3 { animation-delay: .5s } .d4 { animation-delay: .75s } .d5 { animation-delay: 1s }
+    .fc   { stroke-dasharray: 7 7; animation: flow 1.8s linear infinite; }
+    .comb { stroke-dasharray: 200; stroke-dashoffset: 200; animation: comb 6s ease-in-out infinite; }
+    .fan  { transform-box: fill-box; transform-origin: left center; animation: breathe 3.2s ease-in-out infinite; }
+    .dot  { transform-box: fill-box; transform-origin: center; animation: pulse 2.4s ease-in-out infinite; }
+    .blob { animation: drift 14s ease-in-out infinite alternate; }
+    .b2 { animation-duration: 18s }
+    @keyframes draw    { 0% { stroke-dashoffset: 520; } 45%,85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -520; } }
+    @keyframes comb    { 0%,40% { stroke-dashoffset: 200; } 60%,88% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -200; } }
+    @keyframes flow    { to { stroke-dashoffset: -28; } }
+    @keyframes breathe { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(1.12); } }
+    @keyframes pulse   { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+    @keyframes drift   { to { transform: translate(40px, -20px); } }
+    @media (prefers-reduced-motion: reduce) {
+      .fc, .fan, .dot, .blob { animation: none; }
+      .draw, .comb { animation: none; stroke-dashoffset: 0; }
+    }
+  </style>
+
+  <g clip-path="url(#frame)">
+    <rect width="1280" height="420" fill="url(#bg)"/>
+    <circle class="blob" cx="130" cy="50" r="150" fill="#c7d2fe" opacity="0.5" filter="url(#soft)"/>
+    <circle class="blob b2" cx="1180" cy="390" r="170" fill="#99f6e4" opacity="0.5" filter="url(#soft)"/>
+    <circle class="blob" cx="760" cy="-20" r="120" fill="#bae6fd" opacity="0.55" filter="url(#soft)"/>
+    <g stroke="#4f46e5" stroke-opacity="0.05">
+      <path d="M0 70H1280M0 140H1280M0 210H1280M0 280H1280M0 350H1280"/>
+      <path d="M80 0V420M160 0V420M240 0V420M320 0V420M400 0V420M480 0V420"/>
+    </g>
+  </g>
+
+  <!-- ===== left: a panel of units -> individual / pooled -> combination ===== -->
+  <g transform="translate(48 70)">
+    <rect width="540" height="280" rx="22" fill="#ffffff" fill-opacity="0.80" stroke="#e0e7ff" filter="url(#shadow)"/>
+    <g transform="translate(30 26)">
+      <path d="M0 214H480M0 214V0" stroke="#cbd5e1" stroke-width="1.5" fill="none"/>
+      <line x1="300" y1="0" x2="300" y2="214" stroke="#94a3b8" stroke-dasharray="3 5"/>
+      <text class="en" x="296" y="12" text-anchor="end" font-size="12" font-weight="600" fill="#64748b">T</text>
+
+      <!-- unit series i = 1..5 -->
+      <path class="draw"    d="M0 70 L30 62 L60 78 L90 60 L120 72 L150 54 L180 66 L210 50 L240 62 L270 46 L300 56" stroke="#6366f1" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="draw d2" d="M0 110 L30 118 L60 102 L90 112 L120 96 L150 106 L180 92 L210 100 L240 86 L270 96 L300 88" stroke="#0284c7" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="draw d3" d="M0 140 L30 128 L60 138 L90 122 L120 132 L150 118 L180 128 L210 112 L240 124 L270 110 L300 118" stroke="#0d9488" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="draw d4" d="M0 176 L30 168 L60 182 L90 160 L120 170 L150 150 L180 162 L210 144 L240 156 L270 140 L300 150" stroke="#f59e0b" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="draw d5" d="M0 196 L30 188 L60 198 L90 184 L120 192 L150 178 L180 186 L210 172 L240 182 L270 168 L300 176" stroke="#e11d48" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- forecast fan for one unit -->
+      <path class="fan" d="M300 118 C340 112 400 92 470 78 L470 168 C400 158 340 140 300 118 Z" fill="url(#fan)"/>
+      <!-- individual (noisy) and pooled (common) forecasts -->
+      <path class="fc" d="M300 118 C330 98 360 140 390 106 C420 80 445 132 470 100" stroke="#6366f1" stroke-width="2.2" fill="none"/>
+      <path class="fc" d="M300 118 C350 128 410 138 470 146" stroke="#f59e0b" stroke-width="2.2" fill="none"/>
+      <!-- optimal combination -->
+      <path class="comb" d="M300 118 C350 118 410 120 470 123" stroke="#0f766e" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <circle class="dot" cx="470" cy="123" r="6" fill="#0d9488"/>
+
+      <text class="en" x="150" y="238" text-anchor="middle" font-size="13" font-weight="600" fill="#4338ca" letter-spacing="1.5">N UNITS · SHORT T</text>
+      <text class="en" x="385" y="238" text-anchor="middle" font-size="13" font-weight="600" fill="#0f766e" letter-spacing="1.5">COMBINED FORECAST</text>
+    </g>
+  </g>
+
+  <!-- ===== right: title block ===== -->
+  <g>
+    <rect x="1000" y="58" width="232" height="30" rx="15" fill="#e0e7ff"/>
+    <text class="en" x="1116" y="78" text-anchor="middle" font-size="14" font-weight="600" fill="#4338ca">Python · PyPI · v0.1.1</text>
+
+    <text class="en" x="1232" y="150" text-anchor="end" font-size="66" font-weight="800" fill="url(#title)" letter-spacing="-1.5">forecastpanel</text>
+    <text class="en" x="1232" y="192" text-anchor="end" font-size="25" font-weight="700" fill="#0f172a">Forecasting with panel data</text>
+    <text class="en" x="1232" y="224" text-anchor="end" font-size="16.5" fill="#475569">Pesaran, Pick &amp; Timmermann (2026) · Quantitative Economics · doi:10.3982/QE2589</text>
+
+    <g class="en" font-size="15.5" font-weight="700" text-anchor="middle">
+      <rect x="1094" y="252" width="138" height="38" rx="12" fill="#ffffff" stroke="#c7d2fe"/>
+      <text x="1163" y="277" fill="#4338ca">17 methods</text>
+      <rect x="902" y="252" width="182" height="38" rx="12" fill="#ffffff" stroke="#99f6e4"/>
+      <text x="993" y="277" fill="#0f766e">MATLAB-verified 1e-10</text>
+      <rect x="716" y="252" width="176" height="38" rx="12" fill="#ffffff" stroke="#bae6fd"/>
+      <text x="804" y="277" fill="#0369a1">Tables 2–3 reproduced</text>
+      <rect x="612" y="252" width="94" height="38" rx="12" fill="#ffffff" stroke="#fde68a"/>
+      <text x="659" y="277" fill="#b45309">scenarios</text>
+    </g>
+
+    <rect x="890" y="304" width="342" height="32" rx="10" fill="#0f172a" fill-opacity="0.04" stroke="#e2e8f0"/>
+    <text class="mono" x="1061" y="326" text-anchor="middle" font-size="15" fill="#334155">$ pip install forecastpanel</text>
+
+    <line x1="612" y1="352" x2="1232" y2="352" stroke="#dbeafe"/>
+    <text class="en" x="1232" y="382" text-anchor="end" font-size="17" font-weight="700" fill="#1e3a8a">Dr Merwan Roudane</text>
+    <text class="en" x="1032" y="382" text-anchor="end" font-size="15" fill="#64748b">github.com/merwanroudane</text>
+  </g>
+</svg>

@@ -1,10 +1,17 @@
-# forecastpanel
+<p align="center">
+  <img src="https://raw.githubusercontent.com/merwanroudane/forecastpanel/main/assets/banner.svg" alt="forecastpanel — forecasting with panel data in Python" width="100%">
+</p>
 
-[![PyPI](https://img.shields.io/pypi/v/forecastpanel.svg)](https://pypi.org/project/forecastpanel/)
-[![Python](https://img.shields.io/pypi/pyversions/forecastpanel.svg)](https://pypi.org/project/forecastpanel/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![tests](https://github.com/merwanroudane/forecastpanel/actions/workflows/tests.yml/badge.svg)](https://github.com/merwanroudane/forecastpanel/actions)
-[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://merwanroudane.github.io/forecastpanel/)
+<p align="center">
+  <a href="https://pypi.org/project/forecastpanel/"><img src="https://img.shields.io/pypi/v/forecastpanel.svg" alt="PyPI"></a>
+  <a href="https://pypi.org/project/forecastpanel/"><img src="https://img.shields.io/pypi/pyversions/forecastpanel.svg" alt="Python versions"></a>
+  <a href="https://github.com/merwanroudane/forecastpanel/actions"><img src="https://github.com/merwanroudane/forecastpanel/actions/workflows/tests.yml/badge.svg" alt="tests"></a>
+  <a href="https://doi.org/10.3982/QE2589"><img src="https://img.shields.io/badge/paper-QE%202026-4f46e5.svg" alt="Paper"></a>
+  <a href="https://merwanroudane.github.io/forecastpanel/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-0284c7.svg" alt="Docs"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a>
+</p>
+
+# forecastpanel
 
 **forecastpanel** implements the panel forecasting methods of
 **Pesaran, Pick and Timmermann (2026), "Forecasting with panel data: Estimation uncertainty
