@@ -127,7 +127,7 @@ Development version:
 ```bash
 pip install git+https://github.com/merwanroudane/forecastpanel.git
 ```
-Requirements: Python ≥ 3.9 with numpy, scipy, pandas and matplotlib (installed automatically).
+Requirements: Python ≥ 3.10 with numpy, scipy, pandas and matplotlib (installed automatically).
 
 ## 4. Your first forecasts in 60 seconds
 
@@ -558,7 +558,7 @@ text's version as an option. They are listed in [`docs/methods.md`](docs/methods
   title   = {{forecastpanel}: Forecasting with panel data in Python},
   year    = {2026},
   url     = {https://github.com/merwanroudane/forecastpanel},
-  version = {0.1.0}
+  version = {0.1.1}
 }
 @article{pesaran_pick_timmermann_2026,
   author  = {Pesaran, M. Hashem and Pick, Andreas and Timmermann, Allan},

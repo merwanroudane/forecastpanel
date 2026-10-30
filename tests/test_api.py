@@ -93,8 +93,10 @@ def test_evaluation_multistep():
 
 def test_summary_and_latex():
     m = fp.PanelForecaster(_toy(), "firm", "year", "sales", y_lags=[1])
-    s = str(m.fit().summary())
+    rep = m.fit().summary()
+    s = str(rep)
     assert "Comb. (pool)" in s and "Mean group" in s
+    assert r"\toprule" in rep.as_latex() and r"\sym" in rep.as_latex()
     ev = m.evaluate(window=6)
     assert "\\toprule" in ev.to_latex() and "\\toprule" in ev.to_latex("dm")
 

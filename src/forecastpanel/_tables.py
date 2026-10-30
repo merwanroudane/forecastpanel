@@ -117,7 +117,35 @@ def forecast_summary(res) -> TextReport:
     L.append("mean group: Pesaran-Smith (1995) SEs. Weights clipped to [0, 1] as in the replication code.")
     L.append("Delta: heterogeneity cost (40); h: estimation-error cost (41); psi: correlated-heterogeneity term (43).")
     text = "\n".join(L)
-    return TextReport(text, coef.to_latex(float_format="%.4f", na_rep="--"), {"coefficients": coef})
+    return TextReport(text, coefficients_latex(coef), {"coefficients": coef})
+
+
+def coefficients_latex(coef: pd.DataFrame, caption: str = "Panel coefficient estimates") -> str:
+    """Booktabs table: estimators in columns, coefficients with SEs in parentheses."""
+    ests = list(dict.fromkeys(coef.index.get_level_values(0)))
+    vars_ = list(dict.fromkeys(coef.index.get_level_values(1)))
+    body = []
+    for v in vars_:
+        c_row, s_row = [_esc(v)], [""]
+        for e in ests:
+            if (e, v) in coef.index and np.isfinite(coef.loc[(e, v), "coef"]):
+                r = coef.loc[(e, v)]
+                st = _stars(r["p"])
+                c_row.append(f"{r['coef']:.4f}" + (rf"\sym{{{st}}}" if st else ""))
+                s_row.append(f"({r['se']:.4f})")
+            else:
+                c_row.append("--")
+                s_row.append("")
+        body += [" & ".join(c_row) + r" \\", " & ".join(s_row) + r" \\"]
+    return "\n".join([
+        r"% requires \usepackage{booktabs} and \newcommand{\sym}[1]{\ensuremath{^{#1}}}",
+        r"\begin{table}[htbp]\centering", rf"\caption{{{caption}}}",
+        r"\begin{tabular}{l" + "c" * len(ests) + "}", r"\toprule",
+        " & " + " & ".join(_esc(e) for e in ests) + r" \\", r"\midrule", *body, r"\bottomrule",
+        r"\end{tabular}",
+        r"\par\smallskip{\scriptsize Standard errors in parentheses: cluster-robust for pooled and FE, "
+        r"Pesaran-Smith for the mean group. \sym{***} $p<0.01$, \sym{**} $p<0.05$, \sym{*} $p<0.10$.}",
+        r"\end{table}"])
 
 
 # ---------------------------------------------------------------------------
@@ -196,10 +224,6 @@ def evaluation_latex(ev, which="msfe", methods=None, scale=1.0, best_worst_among
             r"\begin{tabular}{l" + "c" * dm.shape[1] + "}", r"\toprule", " & " + cols + r" \\", r"\midrule",
             r1, r2, r"\bottomrule", r"\end{tabular}", r"\end{table}"])
     raise ValueError("which must be 'msfe' or 'dm'")
-
-
-def forecast_table_latex(df: pd.DataFrame, caption: str = "Panel forecasts", float_format="%.3f") -> str:
-    return df.to_latex(float_format=float_format, caption=caption, escape=True)
 
 
 def _esc(s: str) -> str:

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.1] - 2026-10-30
+
+### Fixed
+- `ForecastResults.summary()` no longer requires the optional `jinja2` package: the
+  coefficient table is rendered in LaTeX by the package's own booktabs builder.
+
+### Changed
+- Minimum Python version is 3.10 (tested on 3.10-3.13, Linux and Windows).
+
 ## [0.1.0] - 2026-10-30
 
 ### Added
